@@ -5,18 +5,19 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { generateAccessTokenAndRefreshTokens } from "../utils/generateAccessAndRefreahToken.js";
 
+// user signup controller
 export const signupUser = asyncHandler( async(req , res) =>{
     const {name , email, password } = req.body;
     // todo hamdle image
 
     if([name , email , password].some((field) => !field || field.trim() === '')){
-        return res.status(400).json((new ApiError(400 , "All fields are required.")))
+        throw new ApiError(400 , "All fields are required.")
     };
 
     // check user is already exixt
     const existedUser = await UserModel.findOne({email}).select('-password');
     if(existedUser){
-        return res.status(404).json(( new ApiError(404,'User already exist.')))
+       throw new ApiError(404,'User already exist.')
     };
 
     // check image
@@ -33,7 +34,7 @@ export const signupUser = asyncHandler( async(req , res) =>{
     const createdUser = await UserModel.findById(user?._id).select('-password -refreshToken');
 
     if(!createdUser){
-        return res.status(400).json((new ApiError(400 , "User have not created yet.")))
+        throw new ApiError(400 , "User have not created yet.")
     };
 
     // tokens
@@ -43,15 +44,23 @@ export const signupUser = asyncHandler( async(req , res) =>{
 
     // http methond options
 
-    const option ={
-        httpOnly : true,
-        secure : false,
-    };
     
     
     return res.status(200)
-    .cookie('accessToken' , accessToken , option)
-    .cookie('refreshToken' , refreshToken , option)
+    .cookie('accessToken' , accessToken , {
+           httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 1*60*60*1000 //1 hour
+    })
+    .cookie('refreshToken' , refreshToken , 
+        {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 7*24*60*60*1000 //7 days
+        }
+    )
     .json(new ApiResponse(200 , {user :createdUser , refreshToken }, "User created successfully."))
 
 } );
@@ -63,17 +72,17 @@ export const signInUser = asyncHandler( async ( req ,res) => {
     const {email,password} = req.body;
 
     if (!email) {
-        return res.status(409).json((new ApiError((409, "Email is required."))))
+        throw new ApiError(409, "Email is required.")
     };
     if (!password) {
-        return res.status(409).json(new ApiError((409, "password is required.")))
+        throw new ApiError(409, "password is required.")
     };
 
     // check exist user
     const user = await UserModel.findOne({email}).select('-refreshToken');
 
     if (!user) {
-        return res.status(407).json(new ApiError((407, "User not found.")))
+        throw new ApiError(404, "User not found.")
     };
 
 
@@ -82,7 +91,7 @@ export const signInUser = asyncHandler( async ( req ,res) => {
     const IsPasswordCorrect = await user.comparePassword(password);
 
     if(!IsPasswordCorrect){
-        return res.status(409).json(new ApiError((409, "your password or email is not correct")))
+        throw new ApiError(409, "your password or email is not correct")
     };
 
     // generate token
@@ -90,43 +99,71 @@ export const signInUser = asyncHandler( async ( req ,res) => {
     const {accessToken , refreshToken} = await generateAccessTokenAndRefreshTokens(user?._id);
     
 
-    // http methond options
-
-    const option ={
-        httpOnly : true,
-        secure : false,
-    };
-
     return res.status(200)
-    .cookie('accessToken' , accessToken , option)
-    .cookie('refreshToken' , refreshToken , option)
+    .cookie('accessToken' , accessToken , {
+           httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 1*60*60*1000 //1 hour
+    })
+    .cookie('refreshToken' , refreshToken , 
+          {
+             httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 7*60*60*1000 //7 hour
+          }
+    )
     .json(new ApiResponse(200 ,{user , refreshToken , accessToken} , "User sign in successfully"))
 });
 
 
 // export const signOut controller
 
-export const signOutUser = asyncHandler( async ( req ,res ) => {
-    // find logged in user
+export const signOutUser = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    throw new ApiError(401, "User not authenticated.");
+  }
 
-    if(!req?.user || !req?.user?._id ){
-        return res.status(400).json(new ApiError(400,"User not authenticated."))
-    };
+  await UserModel.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        refreshToken: null,
+      },
+    },
+    { new: true }
+  );
 
 
-    // update user schema 
-    await UserModel.findByIdAndUpdate(req?.user?._id,{
-        $set:{refreshToken : ''}
-    } , {new : true});
+  return res
+    .status(200)
+    .clearCookie("accessToken", 
+        {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 1*60*60*1000 //1 hour
+    }
+    )
+    .clearCookie("refreshToken", 
+        {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 1*60*60*1000 //7 hour
+    })
+    .json(new ApiResponse(200, {}, "User signed out successfully."));
+});
 
-    // clear cookies
-    const option = {
-        httpOnly : true,
-        secure :  false
-    };
 
-    return res.status(201)
-    .clearCookie('accessToken',accessToken)
-    .clearCookie('refreshToken',refreshToken)
-    .json( new ApiResponse(201 , {} , "User sign out successfuly."))
+// get me controller
+
+export const getMe = asyncHandler(async ( req ,res) => {
+    const userId = req?.user?._id;
+
+    const user = await UserModel.findById(userId).select('-password');
+
+    return res.status(200).json( new ApiResponse( 200 , user , "Current logged in user."))
+
 })

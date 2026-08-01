@@ -27,4 +27,18 @@ app.get('/api/v1/health-check' , (req , res) => {
 app.use('/api/v1/user', authRouter)
 
 
+// globle error handler 
+app.use((err, req, res, next) => {
+  console.log("statusCode:", err.statusCode);
+  console.log("message:", err.message);
+
+  res.status(err.statusCode || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+    errors: err.errors || [],
+    data: err.data || null,
+  });
+});
+
+
 export {app};

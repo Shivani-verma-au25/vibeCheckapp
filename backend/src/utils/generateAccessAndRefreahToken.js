@@ -23,6 +23,6 @@ export const generateAccessTokenAndRefreshTokens = async (userId) => {
         return { accessToken , refreshToken}
         
     } catch (error) {
-        return res.status(500).jsons((new ApiError(500 , 'Something went wrong while generating tokens')))
+        throw new ApiError(500 , 'Something went wrong while generating tokens')
     } 
 }
