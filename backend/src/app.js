@@ -29,8 +29,6 @@ app.use('/api/v1/user', authRouter)
 
 // globle error handler 
 app.use((err, req, res, next) => {
-  console.log("statusCode:", err.statusCode);
-  console.log("message:", err.message);
 
   res.status(err.statusCode || 500).json({
     success: false,
