@@ -1,6 +1,8 @@
 import { app } from "./src/app.js";
 import { configrations } from "./src/config/congi.js";
 import { connectToDB } from "./src/db/db.js";
+import redis from './src/config/cache.js'
+
 
 
 connectToDB().then(() => (

@@ -3,6 +3,7 @@ import { UserModel } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import redis from '../config/cache.js'
 import jwt from  'jsonwebtoken'
 
 
@@ -15,10 +16,20 @@ export const isAuthenticated = asyncHandler( async (req ,res , next) => {
         throw new ApiError (400 , "User is not auhtenticated.")
     };
 
+
+    // blacklist check
+
+    const isTokenBlackListed = await redis.get(token);
+
+    if(isTokenBlackListed){
+        throw new ApiError(401 , "User is not authenticated. Token is blacklisted.")
+    }
+
+
     //  decode the token
 
     try {
-        const decodedToken = jwt.verify(token , configrations.accesstoken );
+        const decodedToken =  jwt.verify(token , configrations.accesstoken );
 
         // find user
 
@@ -31,8 +42,14 @@ export const isAuthenticated = asyncHandler( async (req ,res , next) => {
         req.user = user;
         next(); 
     } catch (error) {
-        console.log("Getting error while decoding the token");
-        throw new ApiError(401 , "Invalid access token." , error?.message)   
-    };
+        if (error instanceof ApiError) {
+            throw error;
+        }
+
+        throw new ApiError(
+            401,
+            "Invalid access token."
+        );
+}
     
 });

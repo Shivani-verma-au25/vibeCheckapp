@@ -14,7 +14,10 @@ export const configrations = {
     // cloudinaryName : process.env.CLOUDINARY_CLOUD_NAME,
     imakeKitPrivateKey : process.env.IMAGE_KIT_PRIVATE_KEY,
     imageKitPublicKey : process.env.IMAGE_KIT_PUBLIC_KEY,
-    imageKitUrlEndpoint : process.env.IMAGE_KIT_URL_ENDPOINT
+    imageKitUrlEndpoint : process.env.IMAGE_KIT_URL_ENDPOINT,
+    redisHost : process.env.REDIS_HOST,
+    redisPort : process.env.REDIS_PORT,
+    redisPassword : process.env.REDIS_PASSWORD,
 };
 
 

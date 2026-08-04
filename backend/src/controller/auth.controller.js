@@ -5,6 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { generateAccessTokenAndRefreshTokens } from "../utils/generateAccessAndRefreahToken.js";
 import { uploadFile } from "../utils/cloudinaryUploder.js";
+import redis from '../config/cache.js'
 
 // user signup controller
 export const signupUser = asyncHandler(async (req, res) => {
@@ -158,8 +159,14 @@ export const signOutUser = asyncHandler(async (req, res) => {
                 refreshToken: null,
             },
         },
-        { new: true },
+        {   returnDocument: "after"},
     );
+
+    // blacklist the access token in redis
+    await redis.set(req.cookies?.accessToken, 'blackListed' ,   "EX",  60 * 60); // Set expiration time for 1 hour
+    // await redis.set(req.cookies?.accessToken, Date.now().toString()); 
+
+
 
     return res
         .status(200)
