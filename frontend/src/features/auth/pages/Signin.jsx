@@ -20,7 +20,6 @@ const Signin = () => {
         password : ""
     });
 
-    console.log("user" ,user)
     // onchange handler    
 
     const onChangeHandler = (e) => {
@@ -35,7 +34,6 @@ const Signin = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         const result = await signInHandler(formData);
-          console.log("result",result);
 
     if (result?.success) {
         // toast.success(result.message);

@@ -12,15 +12,13 @@ export const useAuth = () => {
 
         try {
             const response = await signUp(data);
-
             const user = response?.data;
-            // console.log("user", user);
-
 
             if (!user) {
                 throw new Error("User data not found in response.");
             }
-
+            
+            // set data in to context state
             setUser(user?.user);
 
             return {
@@ -31,7 +29,7 @@ export const useAuth = () => {
 
         } catch (error) {
             return {
-                success: false,
+                success: error.response?.success,
                 message:
                     error.response?.data?.message ||
                     error.message ||

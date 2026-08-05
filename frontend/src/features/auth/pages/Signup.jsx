@@ -1,10 +1,62 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FiMail, FiLock, FiUser, FiArrowRight } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Signup = () => {
-    
+  const { loading, signUpHandler } = useAuth();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    image: "",
+  });
+
+  // image handler
+  const imageHandler = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      image: e.target.files[0],
+    }));
+  };
+
+  // onchange handler
+  const onchangeHandler = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // submit handler
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      // create new instance of Formdata because we can't send file in normal objects 
+      const newFormData = new FormData();
+      // append all data into newFormdata
+      newFormData.append("name", formData.name);
+      newFormData.append("email", formData.email);
+      newFormData.append("password", formData.password);
+      newFormData.append("image", formData.image);
+      // calling handler (api)
+      const result = await signUpHandler(newFormData);
+
+      if (result?.success) {
+        // show toast ineasted of logg
+        console.log("result", result?.message);
+        navigate("/sign-in");
+      } else {
+        console.log("error", result?.message);
+      }
+    } catch (error) {
+      console.log("error insign up", error);
+    }
+  };
+
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-5">
       {/* Background Glow */}
@@ -32,7 +84,7 @@ const Signup = () => {
           rhythm.🎵
         </p>
 
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={onSubmitHandler}>
           {/* Username */}
 
           <div className="relative">
@@ -40,6 +92,9 @@ const Signup = () => {
 
             <input
               type="text"
+              name="name"
+              value={formData.name}
+              onChange={onchangeHandler}
               placeholder="John Doe"
               className="w-full rounded-xl border border-white/10 bg-black/40 py-4 pl-12 pr-4 text-white outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-white cusros-pointer"
             />
@@ -52,6 +107,9 @@ const Signup = () => {
 
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={onchangeHandler}
               placeholder="john@gmail.com"
               className="w-full rounded-xl border border-white/10 bg-black/40 py-4 pl-12 pr-4 text-white outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-white cusros-pointer"
             />
@@ -64,6 +122,9 @@ const Signup = () => {
 
             <input
               type="password"
+              name="password"
+              value={formData.password}
+              onChange={onchangeHandler}
               placeholder="Password"
               className=" cusros-pointer w-full rounded-xl border border-white/10 bg-black/40 py-4 pl-12 pr-4 text-white outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-white"
             />
@@ -80,6 +141,7 @@ const Signup = () => {
               type="file"
               name="image"
               accept="image/*"
+              onChange={imageHandler}
               className="block w-full cursor-pointer rounded-xl border border-white/10 bg-black/40 text-sm text-gray-300 file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white file:px-4 file:py-2 file:font-medium file:text-black hover:file:bg-gray-200 focus:border-white focus:outline-none"
             />
           </div>
@@ -102,6 +164,7 @@ const Signup = () => {
           </div>
 
           <motion.button
+            type="submit"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             className="flex w-full items-center justify-center gap-3 rounded-xl bg-white py-4 font-semibold text-black transition hover:bg-gray-200 cusros-pointer"
@@ -111,23 +174,7 @@ const Signup = () => {
           </motion.button>
         </form>
 
-        {/* <div className="my-8 flex items-center gap-4">
-  
-            <div className="h-px flex-1 bg-white/10" />
-  
-            <span className="text-sm text-gray-500">
-              OR
-            </span>
-  
-            <div className="h-px flex-1 bg-white/10" />
-  
-          </div> */}
-
-        {/* <button className="w-full rounded-xl border border-white/10 py-4 text-white transition hover:bg-white hover:text-black">
-  
-            Continue with Google
-  
-          </button> */}
+      
 
         <p className="mt-8 text-center text-gray-400">
           Already have an account?
