@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FiMail, FiLock, FiUser, FiArrowRight } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const Signup = () => {
   const { loading, signUpHandler } = useAuth();
@@ -48,12 +49,15 @@ const Signup = () => {
       if (result?.success) {
         // show toast ineasted of logg
         console.log("result", result?.message);
+        toast.success(result?.message)
         navigate("/sign-in");
       } else {
         console.log("error", result?.message);
+        toast.error(result?.message)
       }
     } catch (error) {
       console.log("error insign up", error);
+      toast.error(error?.message)
     }
   };
 

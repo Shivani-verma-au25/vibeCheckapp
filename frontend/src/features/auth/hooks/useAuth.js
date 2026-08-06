@@ -77,7 +77,7 @@ export const useAuth = () => {
         }
     };
 
-
+    // sign out 
     const signOutHandler = async () => {
         setLoading(true)
         try {
@@ -111,7 +111,6 @@ export const useAuth = () => {
 
 
     // getme handler
-
     const getMeHandler = async () =>{
         setLoading(true);
 
@@ -152,4 +151,4 @@ export const useAuth = () => {
 
     return {user, loading, signUpHandler , signInHandler , signOutHandler , getMeHandler}
 
-}
+};

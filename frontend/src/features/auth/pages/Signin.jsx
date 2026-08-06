@@ -8,6 +8,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 
 
@@ -36,15 +37,20 @@ const Signin = () => {
         const result = await signInHandler(formData);
 
     if (result?.success) {
-        // toast.success(result.message);
+        toast.success(result.message);
         console.log("result",result?.message);
         
         navigate("/");
     } else {
-        // toast.error(result.message);
-        console.log("error" , result?.message);
-        
-    }
+        toast.error(result.message);
+        console.log("error" , result?.message);  
+    };
+
+    // reset states
+    setFormData({
+      email : "",
+      password : ""
+    })
 };
 
 
