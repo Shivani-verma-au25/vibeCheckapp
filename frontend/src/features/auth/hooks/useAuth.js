@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { signIn, signOut, signUp, getMe } from "../services/auth.api";
 import { AuthContext } from "../state/auth.context";
 
@@ -117,14 +117,14 @@ export const useAuth = () => {
 
         try {
             const response = await getMe();
-            const user = response?.data;
-            console.log("user" , user);
+            const  user = response.data;
 
-            if(!user){
+            if(!response?.success){
                 throw new Error("User not found")
             };
+            // save into state
+            setUser(user);
 
-            setUser(user?.user);
             return({
                 success : user?.success,
                 message : user?.message,
@@ -145,6 +145,9 @@ export const useAuth = () => {
         }
     }
 
+    useEffect(() => {
+        getMeHandler();
+    },[])
 
 
     return {user, loading, signUpHandler , signInHandler , signOutHandler , getMeHandler}
