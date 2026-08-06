@@ -23,6 +23,7 @@ app.use(cookieParser());
 
 // routes
 import authRouter from './routes/auth.route.js'
+import songsRouter from './routes/songs.route.js'
 
 app.get('/api/v1/health-check' , (req , res) => {
     return res.status(200).json({
@@ -31,7 +32,8 @@ app.get('/api/v1/health-check' , (req , res) => {
     })
 })
 
-app.use('/api/v1/user', authRouter)
+app.use('/api/v1/user', authRouter);
+app.use('/api/v1/songs', songsRouter);
 
 
 // globle error handler 
