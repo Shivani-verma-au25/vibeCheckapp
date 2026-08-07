@@ -6,7 +6,7 @@ import nodeId3 from 'node-id3';
 import { uploadSongFile } from "../utils/uploadSong.js";
 
 
-
+//  upload song controller
 export const uploadSongscontroller = asyncHandler(async (req, res) => {
     // read information from file.buffer
     const songBuffer = req.file?.buffer;
@@ -21,19 +21,19 @@ export const uploadSongscontroller = asyncHandler(async (req, res) => {
     }
 
     // for optimization use Promise.all it resolve all promises (not wait for done one by one function)
-    const [songFile , posterFile] = await Promise.all([
+    const [songFile, posterFile] = await Promise.all([
         uploadSongFile({
             buffer: songBuffer,
-            fileName: `${tags?.title }.mp3`,
+            fileName: `${tags?.title}.mp3`,
             folder: '/vibe-check/songs'
         }),
-         uploadSongFile({
-                buffer: tags.image.imageBuffer,
-                fileName: `${tags.title}.jpeg`,
-                folder: "/vibe-check/posters",
-            })
+        uploadSongFile({
+            buffer: tags.image.imageBuffer,
+            fileName: `${tags.title}.jpeg`,
+            folder: "/vibe-check/posters",
+        })
     ]);
-    
+
 
     // let songFile;
     // let posterFile = null;
@@ -69,4 +69,26 @@ export const uploadSongscontroller = asyncHandler(async (req, res) => {
     return res.status(201).json(new ApiResponse(201, newSong, "Song created."))
 
 
+});
+
+
+// get song according to mood controller
+
+export const getSongAccordingToMood = asyncHandler(async (req, res) => {
+    const { mood } = req.query;
+
+    if (!mood) {
+        throw new ApiError(404, "Mood is required.")
+    };
+
+    // find mood in db
+    const song = await SongsModel.findOne({
+        mood
+    });
+
+    if (!song) {
+        throw new ApiError(404, "Song  not found.");
+    };
+
+    return res.status(200).json(new ApiResponse(200, song, "Song fetched succesffully."))
 })
