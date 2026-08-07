@@ -27,20 +27,20 @@ export default function FaceExpression({ onClick = () => { } }) {
 
     async function handleClick() {
         const expression = detect({ landmarkerRef, videoRef, setExpression })
-        console.log(expression)
+        // console.log(expression)
         onClick(expression)
     }
 
 
     return (
-        <div style={{ textAlign: "center" }}>
-            <video
+        <div className="w-full text-center h-full">
+            <video className="w-full text-center"
                 ref={videoRef}
                 style={{ width: "400px", borderRadius: "12px" }}
                 playsInline
             />
             <h2>{expression}</h2>
-            <button onClick={handleClick} >Detect expression</button>
+            <button className="bg-gray-800 rounded-md p-3 cursor-pointer text-white" onClick={handleClick} >Detect expression</button>
         </div>
     );
 }

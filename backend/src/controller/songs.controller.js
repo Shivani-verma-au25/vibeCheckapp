@@ -74,21 +74,48 @@ export const uploadSongscontroller = asyncHandler(async (req, res) => {
 
 // get song according to mood controller
 
+// export const getSongAccordingToMood = asyncHandler(async (req, res) => {
+//     const { mood } = req.query;
+
+//     if (!mood?.trim()) {
+//     throw new ApiError(400, "Mood is required.");
+// }
+
+//     // find mood in db
+//     // todo:- is song has multiple mood then how to get the song 
+//     const song = await SongsModel.findOne({
+//         mood
+//     });
+
+//     if (!song) {
+//         throw new ApiError(404, "Song  not found.");
+//     };
+
+//     return res.status(200).json(new ApiResponse(200, song, "Song fetched succesffully."))
+// })
+
 export const getSongAccordingToMood = asyncHandler(async (req, res) => {
-    const { mood } = req.query;
+
+    const mood = req.query.mood?.trim().toLowerCase();
 
     if (!mood) {
-        throw new ApiError(404, "Mood is required.")
-    };
+        throw new ApiError(400, "Mood is required.");
+    }
 
-    // find mood in db
-    const song = await SongsModel.findOne({
-        mood
-    });
+    const songs = await SongsModel.find({ mood });
 
-    if (!song) {
-        throw new ApiError(404, "Song  not found.");
-    };
+    if (!songs.length) {
+        throw new ApiError(404, "No songs found.");
+    }
 
-    return res.status(200).json(new ApiResponse(200, song, "Song fetched succesffully."))
-})
+    const randomSong =
+        songs[Math.floor(Math.random() * songs.length)];
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            randomSong,
+            "Song fetched successfully."
+        )
+    );
+});
