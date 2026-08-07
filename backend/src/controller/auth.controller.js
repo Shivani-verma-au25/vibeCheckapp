@@ -38,6 +38,7 @@ export const signupUser = asyncHandler(async (req, res) => {
             uploadedImage = await uploadFile({
                 buffer: file.buffer,
                 fileName: file.originalname,
+                folder : '/vibe-check/Profile'
             });
         } catch (error) {
             throw new ApiError(400, `Failed to upload file to Cloudinary: ${error.message}`);

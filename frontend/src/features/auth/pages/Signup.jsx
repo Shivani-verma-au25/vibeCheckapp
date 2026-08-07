@@ -8,12 +8,16 @@ import toast from "react-hot-toast";
 const Signup = () => {
   const { loading, signUpHandler } = useAuth();
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     image: "",
   });
+
+
+  
 
   // image handler
   const imageHandler = (e) => {
@@ -45,10 +49,11 @@ const Signup = () => {
       newFormData.append("image", formData.image);
       // calling handler (api)
       const result = await signUpHandler(newFormData);
+        console.log("result data", result);
 
       if (result?.success) {
         // show toast ineasted of logg
-        console.log("result", result?.message);
+        console.log("result", result);
         toast.success(result?.message)
         navigate("/sign-in");
       } else {
@@ -171,10 +176,10 @@ const Signup = () => {
             type="submit"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
+            disabled={loading}
             className="flex w-full items-center justify-center gap-3 rounded-xl bg-white py-4 font-semibold text-black transition hover:bg-gray-200 cusros-pointer"
           >
-            Sign In
-            <FiArrowRight />
+           {loading ? ("Signing In...") : (<> Sign In <FiArrowRight /></>)}
           </motion.button>
         </form>
 

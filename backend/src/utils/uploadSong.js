@@ -13,7 +13,7 @@ const client = new ImageKit({
     urlEndpoint: configrations.imageKitUrlEndpoint,
 });
 
-export async function uploadSongFile({buffer , fileName , folder = 'vibe-check'}){
+export async function uploadSongFile({buffer , fileName , folder }){
     try {
         const result = await client.files.upload({
             file : await ImageKit.toFile(buffer),

@@ -28,6 +28,7 @@ export const useAuth = () => {
             };
 
         } catch (error) {
+            setLoading(false)
             return {
                 success: error.response?.success,
                 message:
@@ -63,6 +64,7 @@ export const useAuth = () => {
 
 
         } catch (error) {
+            setLoading(false)
             return {
                 success: false,
                 message:
@@ -71,6 +73,7 @@ export const useAuth = () => {
                     "Something went wrong",
             };
             console.log("error sign in hadler", error);
+        
             
         } finally {
             setLoading(false)
@@ -132,6 +135,7 @@ export const useAuth = () => {
             
             
         } catch (error) {
+            setLoading(false)
             return {
                 success: false,
                 message:
