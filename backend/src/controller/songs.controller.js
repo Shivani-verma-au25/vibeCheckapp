@@ -108,13 +108,14 @@ export const getSongAccordingToMood = asyncHandler(async (req, res) => {
         throw new ApiError(404, "No songs found.");
     }
 
-    const randomSong =
-        songs[Math.floor(Math.random() * songs.length)];
+    // const randomSong =
+    //     songs[Math.floor(Math.random() * songs.length)];
 
     return res.status(200).json(
         new ApiResponse(
             200,
-            randomSong,
+            // randomSong,
+            songs,
             "Song fetched successfully."
         )
     );

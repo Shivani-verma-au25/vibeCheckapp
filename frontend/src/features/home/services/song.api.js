@@ -18,3 +18,13 @@ export const getSongByMood = async ({mood}) => {
     const response = await api.get(`/api/v1/songs/get-song?mood=${mood}`);
     return response.data;
 };
+
+
+
+// export const getSongByMood = async ({mood}) => {
+//     // query
+//     const response = await api.get(`/api/v1/songs/get-song`,{
+//         params:mood
+//     });
+//     return response.data;
+// };
