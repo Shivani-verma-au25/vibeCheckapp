@@ -4,6 +4,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { SongsModel } from "../models/songs.model.js";
 import nodeId3 from 'node-id3';
 import { uploadSongFile } from "../utils/uploadSong.js";
+import { json } from "stream/consumers";
+import { log } from "console";
 
 
 //  upload song controller
@@ -120,3 +122,53 @@ export const getSongAccordingToMood = asyncHandler(async (req, res) => {
         )
     );
 });
+
+
+// get all songs
+
+export const getAllSongs = asyncHandler( async ( req , res) =>{
+    const songs = await SongsModel.find() // get all data
+    if(!songs){
+        throw new ApiError(400 , "Song not Available.")
+    };
+
+
+    return res.status(200).json( new ApiResponse(200 , songs , "All songs."))
+});
+
+
+//  search songs by queries
+
+
+export const searchSongs = asyncHandler( async (req ,res) => {
+    const {q} = req.query; // get query
+
+    if(!q?.trim()){
+        throw new ApiError(400, "Search query is required.");
+    };
+
+    const songs = await SongsModel.find({
+        // song search by title and mood
+        $or :[
+            {
+                title : {
+                $regex: q.trim(),
+                $options : 'i'
+            }
+        },
+        {
+            mood :{
+                $regex : q.trim(),
+               $options : 'i'
+            }
+        }]
+    });
+
+
+    if(!songs?.length === 0){
+        throw new  ApiError(400 , "Song not found.")
+    };
+
+    return res.status(200).json( new ApiResponse(200 , songs , `Song found for ${q}`))
+
+})
