@@ -19,6 +19,20 @@ export const getSongByMood = async ({mood}) => {
     return response.data;
 };
 
+// get all songs
+export const getAllSongs = async()=>{
+    const response = await api.get('/api/v1/songs/get-all-songs');
+    return response.data;
+};
+
+
+// search song by title nad name
+
+export const searchSong = async (query) =>{
+    const response = await api.get(`/api/v1/songs/search?q=${query}`);
+    return response.data;
+}
+
 
 
 // export const getSongByMood = async ({mood}) => {

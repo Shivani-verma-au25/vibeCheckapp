@@ -7,19 +7,27 @@ const songsSchema = new Schema({
     },
     posterUrl: {
         type: String,
-        required: [true, "Song poster is required."]
+        required: [false, "Song poster is required."],
+        default: ""
     },
     title: {
         type: String,
         required: [true, "Title is required."]
     },
+
     mood: {
-        type:String,
-        enum:{
-            values:['happy' , "sad" , "surprised"],
-            message : "enum message"
-        }
+        type: String,
+        enum: ["happy", "sad", "surprised"],
+        default: null
     }
+    // mood: {
+    //     type:String,
+    //     enum:{
+    //         values:['happy' , "sad" , "surprised"],
+    //         message : "enum message"
+    //     },
+    //     default : null
+    // }
 })
 
 export const SongsModel = mongoose.model("SongsModel", songsSchema);

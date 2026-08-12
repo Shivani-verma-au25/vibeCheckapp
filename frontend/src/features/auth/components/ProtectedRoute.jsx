@@ -1,21 +1,23 @@
-import React from 'react'
-import { useAuth } from '../hooks/useAuth'
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
-const ProtectedRoute = ({children}) => {
-    const {user , loading} = useAuth();
+const ProtectedRoute = () => {
 
-    // if loading is true show loading 
-    if(loading){
-        return <h1>Loading .....</h1>
-    };
+    const { user, loading } = useAuth();
 
-    // if user is not logged in fallbacke to sign-in page
-    if( !user ){
-        return <Navigate to='/sign-in'  replace/>
-    };
+    if (loading) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-black text-white">
+                Loading...
+            </div>
+        );
+    }
 
-  return children
-}
+    if (!user) {
+        return <Navigate to="/sign-in" replace />;
+    }
+
+    return <Outlet />;
+};
 
 export default ProtectedRoute;

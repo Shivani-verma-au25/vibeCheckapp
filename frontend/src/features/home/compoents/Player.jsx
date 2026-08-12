@@ -57,8 +57,6 @@ const Player = () => {
 
     audio.load();
 
-  
-
     // automatically play the song
     const playSong = async () => {
         try {
@@ -74,6 +72,7 @@ const Player = () => {
     playSong();
 
   }, [currentSong?.url])
+
 
   const togglePlay = () => {
     const audio = audioRef.current
@@ -143,55 +142,70 @@ const Player = () => {
   const progress = duration ? (currentTime / duration) * 100 : 0
 
   if (!songs) return null
+ 
+
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-black/90 backdrop-blur-xl">
-      <audio
-        ref={audioRef}
-        // src={songs.url}
-        src={currentSong?.url}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
-        onEnded={handleSongEnd}
-      />
+  <div className="fixed inset-x-0 bottom-19 sm:bottom-0 z-50 border-t border-white/10 bg-black/95 backdrop-blur-xl">
+{/* //   <div className="fixed left-0 right-0 bottom-19 lg:bottom-0 z-50 border-t border-white/10 bg-black/95 backdrop-blur-xl"> */}
 
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 p-5 lg:flex-row lg:items-center lg:justify-between">
+    <audio
+      ref={audioRef}
+      src={currentSong?.url}
+      onTimeUpdate={handleTimeUpdate}
+      onLoadedMetadata={handleLoadedMetadata}
+      onEnded={handleSongEnd}
+    />
 
-        {/* Song Info */}
-        <div className="flex items-center gap-4 min-w-[250px]">
+    <div className="mx-auto w-full max-w-7xl px-3 py-3 sm:px-5 sm:py-4">
+
+      {/* ================= MOBILE / DESKTOP CONTENT ================= */}
+
+      <div className="flex flex-col gap-3 md:grid md:grid-cols-[260px_1fr_220px] md:items-center md:gap-6">
+
+        {/* ================= SONG INFO ================= */}
+
+        <div className="flex min-w-0 items-center gap-3">
+
           <img
-            // src={songs.posterUrl}
             src={currentSong?.posterUrl}
-            // alt={songs.title}         
-            alt={currentSong?.title}
-            className="h-16 w-16 rounded-xl object-cover shadow-lg"
+            alt={currentSong?.title || "Song"}
+            className="h-12 w-12 shrink-0 rounded-lg object-cover shadow-lg sm:h-14 sm:w-14"
           />
 
-          <div>
-            <h3 className="font-semibold text-white">
-              {currentSong?.title}
+          <div className="min-w-0">
+            <h3 className="truncate text-sm font-semibold text-white sm:text-base">
+              {currentSong?.title || "There is no song"}
             </h3>
 
-            <p className="text-sm text-gray-400">
-              Mood : {currentSong?.mood}
+            <p className="mt-0.5 truncate text-xs text-gray-400">
+              {currentSong?.mood
+                ? `Mood: ${currentSong.mood}`
+                : "No mood"}
             </p>
           </div>
+
         </div>
 
-        {/* Progress */}
-        <div className="flex flex-1 flex-col gap-2">
 
-          <div className="flex items-center gap-3">
+        {/* ================= CENTER ================= */}
 
-            <span className="text-xs text-gray-400">
+        <div className="flex min-w-0 flex-col gap-2">
+
+          {/* Progress */}
+
+          <div className="flex items-center gap-2">
+
+            <span className="w-8 shrink-0 text-right text-[10px] text-gray-400 sm:w-10 sm:text-xs">
               {formatTime(currentTime)}
             </span>
 
             <div
               ref={progressRef}
               onClick={handleProgressClick}
-              className="relative h-2 flex-1 cursor-pointer overflow-hidden rounded-full bg-white/10"
+              className="relative h-1.5 flex-1 cursor-pointer rounded-full bg-white/10 sm:h-2"
             >
+
               <div
                 className="absolute left-0 top-0 h-full rounded-full bg-white"
                 style={{
@@ -200,52 +214,69 @@ const Player = () => {
               />
 
               <div
-                className="absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-white shadow-lg"
+                className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-white shadow-lg sm:h-4 sm:w-4"
                 style={{
-                  left: `calc(${progress}% - 8px)`,
+                  left: `calc(${progress}% - 6px)`,
                 }}
               />
+
             </div>
 
-            <span className="text-xs text-gray-400">
+            <span className="w-8 shrink-0 text-[10px] text-gray-400 sm:w-10 sm:text-xs">
               {formatTime(duration)}
             </span>
+
           </div>
+
 
           {/* Controls */}
 
           <div className="flex items-center justify-center gap-5">
 
+            {/* Previous / Back 5 sec */}
+
             <button
               onClick={() => skip(-5)}
-              className="rounded-full bg-white/10 p-3 text-white transition hover:bg-white hover:text-black"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white hover:text-black sm:h-10 sm:w-10"
+              title="Back 5 seconds"
             >
-              <FaBackward />
+              <FaBackward size={10} />
             </button>
+
+
+            {/* Play / Pause */}
 
             <button
               onClick={togglePlay}
-              className="rounded-full bg-white p-5 text-black transition hover:scale-110"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-black transition hover:scale-105 sm:h-12 sm:w-12"
+              title={isPlaying ? "Pause" : "Play"}
             >
               {isPlaying ? (
-                <FaPause size={24} />
+                <FaPause size={15} />
               ) : (
-                <FaPlay size={24} />
+                <FaPlay size={15} />
               )}
             </button>
 
+
+            {/* Forward 5 sec */}
+
             <button
               onClick={() => skip(5)}
-              className="rounded-full bg-white/10 p-3 text-white transition hover:bg-white hover:text-black"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white hover:text-black sm:h-10 sm:w-10"
+              title="Forward 5 seconds"
             >
-              <FaForward />
+              <FaForward size={10} />
             </button>
+
           </div>
+
         </div>
 
-        {/* Right Side */}
 
-        <div className="flex items-center gap-5">
+        {/* ================= RIGHT CONTROLS ================= */}
+
+        <div className="flex items-center justify-center gap-4 md:justify-end">
 
           {/* Speed */}
 
@@ -253,22 +284,23 @@ const Player = () => {
 
             <button
               onClick={() => setShowSpeed(!showSpeed)}
-              className="rounded-lg border border-white/10 bg-white/10 px-3 py-2 text-sm text-white"
+              className="rounded-lg border border-white/10 bg-white/10 px-2.5 py-1.5 text-xs text-white transition hover:bg-white/20 sm:px-3 sm:py-2 sm:text-sm"
             >
               {speed}x
             </button>
 
             {showSpeed && (
-              <div className="absolute bottom-12 right-0 flex w-20 flex-col overflow-hidden rounded-lg border border-white/10 bg-zinc-900">
+              <div className="absolute bottom-10 right-0 z-50 flex w-20 flex-col overflow-hidden rounded-lg border border-white/10 bg-zinc-900 shadow-xl">
 
                 {SPEED_OPTIONS.map((item) => (
                   <button
                     key={item}
                     onClick={() => handleSpeedChange(item)}
-                    className={`px-4 py-2 text-sm transition ${item === speed
-                      ? "bg-white text-black"
-                      : "text-white hover:bg-white/10"
-                      }`}
+                    className={`px-3 py-2 text-xs transition sm:text-sm ${
+                      item === speed
+                        ? "bg-white text-black"
+                        : "text-white hover:bg-white/10"
+                    }`}
                   >
                     {item}x
                   </button>
@@ -279,20 +311,24 @@ const Player = () => {
 
           </div>
 
+
           {/* Volume */}
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
 
             <button
               onClick={toggleMute}
-              className="text-white"
+              className="text-white transition hover:text-gray-300"
+              title={isMuted ? "Unmute" : "Mute"}
             >
               {isMuted ? (
-                <FaVolumeMute size={20} />
+                <FaVolumeMute size={18} />
               ) : (
-                <FaVolumeUp size={20} />
+                <FaVolumeUp size={18} />
               )}
             </button>
+
+            {/* Hide slider on very small screens */}
 
             <input
               type="range"
@@ -301,32 +337,22 @@ const Player = () => {
               step={0.05}
               value={isMuted ? 0 : volume}
               onChange={handleVolume}
-              className="w-24 accent-white"
+              className="hidden w-20 accent-white sm:block"
             />
+
           </div>
 
         </div>
+
       </div>
+
     </div>
-  );
+
+  </div>
+);
 }
 
 export default Player
 
 
-// ------------------------------------------------------
 
-
-{/* <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-black/90 backdrop-blur-3xl">
-
-    <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
-
-        <SongInfo />
-
-        <Controls />
-
-        <VolumeControl />
-
-    </div>
-
-</div> */}

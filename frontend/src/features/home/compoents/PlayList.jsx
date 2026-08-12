@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useSongs } from "../hooks/useSongs";
 
 const PlayList = () => {
@@ -7,11 +8,19 @@ const PlayList = () => {
         currentSongIndex,
         selectSong,
         setCurrentSong,
-        currentSong
+        currentSong,
+        getAllSongsHandler
     } = useSongs();
 
+
+    useEffect(() =>{
+        getAllSongsHandler();
+    },[]);
+
+    
+
     return (
-        <div className="space-y-2">
+        <div className="space-y-2 p-2 pb-30 md:pb-0">
 
             {songs.map((song, index) => (
 
