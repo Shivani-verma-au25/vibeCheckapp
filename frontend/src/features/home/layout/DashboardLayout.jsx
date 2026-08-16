@@ -144,7 +144,7 @@ const DashboardLayout = () => {
                 {/* THIS IS THE IMPORTANT PART */}
                 {/* ================================= */}
 
-                <div className="md:pb-32  pt-2xl">
+                <div className="pb-40 md:pb-32 pt-2xl">
 
                     <Outlet />
 

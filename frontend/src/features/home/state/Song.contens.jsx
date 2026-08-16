@@ -7,12 +7,12 @@ export const songContext = createContext();
 export const SongContenxtProvider = ({children}) => {
     const [songLoading , setSongLoading] = useState(false);
     const [songs ,setSongs] = useState([]);
-    // const [currentSong ,setCurrentSong] = useState(null);
     const [currentSongIndex, setCurrentSongIndex] = useState(0);
-    const currentSong = songs[currentSongIndex] || null;
+    const [playQueue, setPlayQueue] = useState([]);
 
+    const currentSong = playQueue[currentSongIndex] || null;
+   
 
-    
 
 
     return <songContext.Provider value={{
@@ -20,7 +20,12 @@ export const SongContenxtProvider = ({children}) => {
         songs  ,
         setSongLoading ,
         setSongs , 
+
         currentSong ,
+
+        setPlayQueue,
+        playQueue,
+
         currentSongIndex , 
         setCurrentSongIndex ,  }} >{children}</songContext.Provider>
 }

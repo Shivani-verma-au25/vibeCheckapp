@@ -655,6 +655,7 @@ import {
 import FaceExpression from "../../Expression/components/FaceExpression";
 import Playlist from "../compoents/PlayList";
 import { useSongs } from "../hooks/useSongs";
+import RecommendedPlaylist from "../compoents/RecommendedSongs";
 
 const Home = () => {
 
@@ -848,6 +849,7 @@ const Home = () => {
             {/* ================= PLAYLIST ================= */}
 
             <section className="mt-14">
+                {/* music logo */}
 
                 <div className="mb-6 flex items-center gap-3">
 
@@ -859,7 +861,7 @@ const Home = () => {
 
                 </div>
 
-                <Playlist />
+                <RecommendedPlaylist />
 
             </section>
 

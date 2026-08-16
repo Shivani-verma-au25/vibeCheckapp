@@ -25,7 +25,7 @@ const formatTime = (seconds) => {
 
 
 const Player = () => {
-  const { songs, currentSong, playNext, playPrevious, selectSong } = useSongs()
+  const { songs, currentSong, playNext, playPrevious, selectSong  ,playQueue} = useSongs()
 
   const audioRef = useRef(null)
   const progressRef = useRef(null)

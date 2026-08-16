@@ -1,40 +1,29 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSongs } from "../hooks/useSongs";
 
-const PlayList = () => {
+const RecommendedSongs = () => {
 
     const {
-        songs,
-        currentSongIndex,
         selectSong,
-        currentSong,
-        getAllSongsHandler,
-        playQueue
+        playQueue,
+        currentSongIndex
     } = useSongs();
 
-    
-    useEffect(() =>{
-        getAllSongsHandler();
-    },[]);
 
+    if (!playQueue?.length) {
+        return null;
+    };
 
-
-     if (!songs) {
-        return (
-            <div className="p-5 text-center text-gray-400">
-                No songs available
-            </div>
-        );
-    }
-    
 
     return (
         <div className="space-y-2 p-2 pb-30 md:pb-0">
 
-            {songs?.map((sng, index) => (
+            {/* playqueue songs  */}
+
+            {playQueue?.map((song, index) => (
 
                 <div
-                    key={sng?._id}
+                    key={song?._id}
                     onClick={() => selectSong(index)}
                     // onClick={() => setCurrentSong(song)}
                     className={`
@@ -49,14 +38,14 @@ const PlayList = () => {
                 >
 
                     <img
-                        src={sng?.posterUrl}
-                        alt={sng?.title}
+                        src={song?.posterUrl}
+                        alt={song?.title}
                         className="w-12 h-12 rounded-md object-cover"
                     />
 
                     <div>
-                        <h3>{sng?.title}</h3>
-                        <p>{sng?.mood}</p>
+                        <h3>{song?.title}</h3>
+                        <p>{song?.mood || 'There is no mood'} </p>
                     </div>
 
                 </div>
@@ -67,4 +56,4 @@ const PlayList = () => {
     );
 };
 
-export default PlayList;
+export default RecommendedSongs;
