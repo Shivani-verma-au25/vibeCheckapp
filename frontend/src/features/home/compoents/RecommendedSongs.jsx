@@ -10,7 +10,7 @@ const RecommendedSongs = () => {
     } = useSongs();
 
 
-    if (!playQueue?.length) {
+    if (!playQueue || playQueue?.length === 0) {
         return null;
     };
 

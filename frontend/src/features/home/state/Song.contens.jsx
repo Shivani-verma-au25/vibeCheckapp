@@ -11,6 +11,11 @@ export const SongContenxtProvider = ({children}) => {
     const [playQueue, setPlayQueue] = useState([]);
 
     const currentSong = playQueue[currentSongIndex] || null;
+
+    const [searchSong ,setSearchSong] = useState('');
+
+     // What created the current queue?
+    const [queueType, setQueueType] = useState("all");
    
 
 
@@ -25,6 +30,12 @@ export const SongContenxtProvider = ({children}) => {
 
         setPlayQueue,
         playQueue,
+
+        searchSong ,
+        setSearchSong,
+        
+        queueType,
+         setQueueType,
 
         currentSongIndex , 
         setCurrentSongIndex ,  }} >{children}</songContext.Provider>

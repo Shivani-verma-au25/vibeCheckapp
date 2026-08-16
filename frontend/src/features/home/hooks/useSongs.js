@@ -14,6 +14,7 @@ export const useSongs = () => {
         playQueue,
         setPlayQueue,
 
+        setQueueType,
 
         currentSong,
         // setCurrentSong,
@@ -34,24 +35,20 @@ export const useSongs = () => {
             const response = await getSongByMood({ mood });
 
             const playlist = response?.data;
-            console.log("res" , response);
-
 
             if (!playlist) {
                 throw new Error("No song found.");
             }
 
             // setRecommendedSongs
-            setRecommendedSongs(playlist)
+            // setRecommendedSongs(playlist)
 
-             // IMPORTANT:
+            // IMPORTANT:
             // Mood songs become the current play queue
             setPlayQueue(playlist);
 
-           
-            // Start first recommended song
-            //set current song 
-            // setCurrentSong(playlist[0])
+            // Tell UI this is the normal playlist
+            setQueueType("all");
 
             // Start from first song
             setCurrentSongIndex(0);
@@ -100,7 +97,7 @@ export const useSongs = () => {
         // --------------------
 
         // if (!songs?.length) return;
-       
+
 
         // setCurrentSongIndex((prev) => {
         // // const nextIndex =
@@ -158,38 +155,46 @@ export const useSongs = () => {
     };
 
 
-    // select song 
     // const selectSong = (index) => {
-    //     if (index < 0 || index >= songs.length) return;
+
+    //     if (
+    //         index < 0 ||
+    //         index >= playQueue?.length
+    //     ) {
+    //         return;
+    //     }
+
 
     //     setCurrentSongIndex(index);
-    //     // set next song index into setCurrentSong state
-    //     // setCurrentSong(songs[index]);
     // };
 
-    const selectSong = (index) => {
+    // ----------------
 
-        if (
-            index < 0 ||
-            index >= playQueue?.length
-        ) {
+    const selectSong = (song) => {
+        if (!song) return;
+
+        const queueIndex = playQueue.findIndex(
+            (item) => item._id === song._id
+        );
+
+        if (queueIndex === -1) {
+            // Song isn't currently in the queue.
+            // Add the clicked song as the queue.
+            setPlayQueue([song]);
+            setCurrentSongIndex(0);
             return;
         }
 
-
-        setCurrentSongIndex(index);
+        setCurrentSongIndex(queueIndex);
     };
-
-
     // get all songs
-
     const getAllSongsHandler = async () => {
         setSongLoading(true);
 
         try {
             const res = await getAllSongs();
             const allSongs = res.data;
-         
+
             if (allSongs?.length === 0) {
                 throw new Error('Song not found')
             };
@@ -201,6 +206,9 @@ export const useSongs = () => {
             // If user wants to play all songs,
             // make all songs the queue.
             setPlayQueue(allSongs);
+
+                // Tell UI this is the normal playlist
+        setQueueType("all");
 
             // Start from first song
             setCurrentSongIndex(0);
@@ -237,8 +245,11 @@ export const useSongs = () => {
             };
 
             // setSongs(song);
-             // Search results become queue
+            // Search results become queue
             setPlayQueue(searchResults);
+
+            // Tell UI this is a mood queue
+        setQueueType("mood");
 
             // Start from first result
             setCurrentSongIndex(0);
@@ -260,6 +271,12 @@ export const useSongs = () => {
         }
     };
 
+// show all songs
+        const showAllSongs = () => {
+            setPlayQueue(songs);
+            setQueueType("all");
+            setCurrentSongIndex(0);
+        };
 
 
 
@@ -282,8 +299,9 @@ export const useSongs = () => {
         getAllSongsHandler,
         serachHandler,
 
-         // Current queue
+        // Current queue
         playQueue,
+        showAllSongs
 
     };
 }

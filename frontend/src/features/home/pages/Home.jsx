@@ -10,6 +10,7 @@ import FaceExpression from "../../Expression/components/FaceExpression";
 import Playlist from "../compoents/PlayList";
 import { useSongs } from "../hooks/useSongs";
 import RecommendedPlaylist from "../compoents/RecommendedSongs";
+import PlayList from "../compoents/PlayList";
 
 const Home = () => {
 
@@ -119,9 +120,7 @@ const Home = () => {
             {/* ================= SCANNER ================= */}
 
             <AnimatePresence>
-
                 {showScanner && (
-
                     <motion.section
                         initial={{
                             opacity: 0,
@@ -138,23 +137,19 @@ const Home = () => {
                             height: 0,
                             y: 20,
                         }}
-                        className="mt-10 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-10"
+                        className="mt-10 w-full overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-4 sm:p-8"
                     >
 
                         {/* Scanner Header */}
-
                         <div className="mb-8 flex items-start justify-between">
 
                             <div>
-
                                 <div className="flex items-center gap-2">
-
                                     <FiCamera />
 
                                     <span className="text-xs uppercase tracking-[0.2em] text-gray-500">
                                         Mood Scanner
                                     </span>
-
                                 </div>
 
                                 <h2 className="mt-3 text-2xl font-bold">
@@ -165,38 +160,26 @@ const Home = () => {
                                     Look at the camera and let us detect
                                     your current mood.
                                 </p>
-
                             </div>
-
-
-                            {/* Close */}
 
                             <button
                                 onClick={() => setShowScanner(false)}
                                 className="rounded-full border border-white/10 p-2 text-gray-500 transition hover:bg-white hover:text-black"
                             >
-
                                 <FiX />
-
                             </button>
 
                         </div>
 
-
                         {/* Scanner */}
-
-                        <div className="flex justify-center">
-
-                            <FaceExpression
-                                onClick={handleMood}
-                            />
-
+                        <div className="flex w-full justify-center">
+                            <div className="w-full flex justify-center">
+                                <FaceExpression onClick={handleMood}  />
+                            </div>
                         </div>
 
                     </motion.section>
-
                 )}
-
             </AnimatePresence>
 
 
@@ -215,8 +198,9 @@ const Home = () => {
 
                 </div>
 
-                <RecommendedPlaylist />
-
+                {/* <RecommendedPlaylist /> */}
+                
+                <PlayList/>
             </section>
 
         </div>

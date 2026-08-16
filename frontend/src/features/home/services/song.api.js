@@ -26,7 +26,7 @@ export const getAllSongs = async()=>{
 };
 
 
-// search song by title nad name
+// search song by title and name
 
 export const searchSong = async (query) =>{
     const response = await api.get(`/api/v1/songs/search?q=${query}`);

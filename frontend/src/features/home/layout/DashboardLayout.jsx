@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import { FiHome, FiList, FiUser, FiMusic } from "react-icons/fi";
 import { motion } from "framer-motion";
@@ -7,8 +7,10 @@ import Player from '../compoents/Player'
 
 const DashboardLayout = () => {
 
-    const { currentSong } = useSongs();
+    const { currentSong , serachHandler} = useSongs();
+    const [search ,setSearch] = useState('');
 
+    
     const navItems = [
         {
             name: "Home",
@@ -26,6 +28,21 @@ const DashboardLayout = () => {
             icon: FiUser,
         },
     ];
+
+    // useEffect for search
+    useEffect(() =>{
+        const timer = setTimeout(()=>{
+            if(search?.trim()){
+                serachHandler(search.trim())
+            }
+        },500);
+
+        // clear setTimeout 
+        return () =>{
+            clearTimeout(timer)
+        }
+        
+    },[search])    
 
     return (
         <main className="min-h-screen bg-black text-white">
@@ -125,6 +142,9 @@ const DashboardLayout = () => {
 
 
                         <input
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            
                             type="text"
                             placeholder="Search songs, moods..."
                             className="hidden md:block w-full max-w-md rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm outline-none placeholder:text-gray-600 focus:border-white/30"
