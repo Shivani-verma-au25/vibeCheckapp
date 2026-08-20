@@ -7,10 +7,10 @@ import Player from '../compoents/Player'
 
 const DashboardLayout = () => {
 
-    const { currentSong , serachHandler} = useSongs();
-    const [search ,setSearch] = useState('');
+    const { currentSong, serachHandler } = useSongs();
+    const [search, setSearch] = useState('');
 
-    
+
     const navItems = [
         {
             name: "Home",
@@ -30,19 +30,34 @@ const DashboardLayout = () => {
     ];
 
     // useEffect for search
-    useEffect(() =>{
-        const timer = setTimeout(()=>{
-            if(search?.trim()){
-                serachHandler(search.trim())
-            }
-        },500);
+    useEffect(() => {
 
-        // clear setTimeout 
-        return () =>{
-            clearTimeout(timer)
-        }
+    const query = search.trim();
+
+    // Don't call API when input is empty
+    if (!query) {
+        return;
+    }
+
+    //  create timer
+    const timer = setTimeout(() => {
+        serachHandler(query);
+    }, 500);
+
+    // clear timer 
+    return () => {
+        clearTimeout(timer);
+    };
+
+}, [search]);
+
+
+    //  handel clear search
+
+    // const handleClearSearch = () =>{
+    //     setSearch('');
         
-    },[search])    
+    // }
 
     return (
         <main className="min-h-screen bg-black text-white">
@@ -126,7 +141,7 @@ const DashboardLayout = () => {
 
                 <header className="sticky top-0 z-30 border-b border-white/10 bg-black/80 backdrop-blur-xl">
 
-                    <div className="flex items-center justify-between px-5 py-4">
+                    <div className="flex items-center justify-between px-2 sm:px-5 py-4 ">
 
                         <div className="lg:hidden flex items-center gap-3">
 
@@ -134,25 +149,37 @@ const DashboardLayout = () => {
                                 <FiMusic />
                             </div>
 
-                            <span className="font-bold">
+                            <span className="font-bold hidden sm:flex ">
                                 VibeCheck
                             </span>
 
                         </div>
 
+                        {/*  search */}
+                        <div className="relative w-full max-w-sm p-1">
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="Search songs, moods..."
+                                className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 pr-10 text-sm outline-none placeholder:text-gray-600 focus:border-white/30"
+                            />
 
-                        <input
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            
-                            type="text"
-                            placeholder="Search songs, moods..."
-                            className="hidden md:block w-full max-w-md rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm outline-none placeholder:text-gray-600 focus:border-white/30"
-                        />
+                            {search && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSearch("")}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+                                >
+                                    ×
+                                </button>
+                            )}
+                        </div>
 
 
+                        {/* profile */}
                         <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10">
-                            <FiUser />
+                            <FiUser size={20} />
                         </div>
 
                     </div>
@@ -223,9 +250,9 @@ const DashboardLayout = () => {
                 </motion.div>
             )}
 
-        {/* player */}
-                    <Player />
-             
+            {/* player */}
+            <Player />
+
 
         </main>
     );
