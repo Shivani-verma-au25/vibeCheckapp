@@ -72,8 +72,6 @@ export const useAuth = () => {
                     error.message ||
                     "Something went wrong",
             };
-            console.log("error sign in hadler", error);
-
 
         } finally {
             setLoading(false)
@@ -85,7 +83,6 @@ export const useAuth = () => {
         setLoading(true)
         try {
             const response = await signOut();
-            console.log("res", response);
 
             if (!response?.success) {
                 throw new Error(response?.message)
@@ -135,8 +132,6 @@ export const useAuth = () => {
 
         } catch (error) {
 
-            console.log("error in getMe:", error);
-
             return {
                 success: false,
                 message:
@@ -182,9 +177,6 @@ export const useAuth = () => {
             setLoading(false);
         }
     }
-
-
-
 
     return { user, loading, signUpHandler, signInHandler, signOutHandler, getMeHandler, updateUserProfileHandler }
 
