@@ -35,7 +35,6 @@ const Signin = () => {
         navigate("/");
       } else {
         toast.error(result.message);
-        console.log("error", result?.message);
       }
     } catch (error) {
       throw error;
