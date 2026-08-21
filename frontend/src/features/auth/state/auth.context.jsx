@@ -1,4 +1,6 @@
-import {  createContext, useState } from "react";
+import {  createContext, useEffect, useState } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { getMe } from "../services/auth.api";
 
 
 export const AuthContext  = createContext();
@@ -9,6 +11,37 @@ export const AuthProvider = ({children}) =>{
     const [user , setUser] = useState(null);
 
     const [loading , setLoading] = useState(true);
+    // const {getMeHandler} = useAuth();
+
+    useEffect(() => {
+
+        const checkUser = async () => {
+
+            try {
+
+                const response = await getMe();
+
+                if (response?.success) {
+                    setUser(response.data);
+                } else {
+                    setUser(null);
+                }
+
+            } catch (error) {
+
+                setUser(null);
+
+            } finally {
+
+                setLoading(false);
+
+            }
+        };
+
+        checkUser();
+
+    }, []);
+
 
 
     return (

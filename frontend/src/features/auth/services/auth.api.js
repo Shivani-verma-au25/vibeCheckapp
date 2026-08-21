@@ -27,3 +27,9 @@ export const getMe = async(data) =>{
     const response = await apiIntsance.get('/api/v1/user/me');
     return response.data;
 };
+
+// update user profile
+export const updateProfile = async (data) =>{
+    const response = await apiIntsance.put("/api/v1/user/update-profile" ,data);
+    return response.data;
+}

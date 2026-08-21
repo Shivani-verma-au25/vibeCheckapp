@@ -10,6 +10,7 @@ import DashboardLayout from "../features/home/layout/DashboardLayout";
 import Home from "../features/home/pages/Home";
 import Playlist from "../features/home/compoents/PlayList";
 import Profile from "../features/home/pages/Profile";
+import PageNotFound from "../features/auth/components/PageNotFound";
 
 const router = createBrowserRouter([
     // =========================
@@ -60,6 +61,11 @@ const router = createBrowserRouter([
             }
 
         ]
+    },
+
+    {
+        path:'*',
+        element:<PageNotFound/>
     }
 ]);
 

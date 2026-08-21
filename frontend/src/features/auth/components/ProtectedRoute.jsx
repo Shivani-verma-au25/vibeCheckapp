@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import Loader from "./Loader";
 
 const ProtectedRoute = () => {
 
@@ -7,9 +8,7 @@ const ProtectedRoute = () => {
 
     if (loading) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-black text-white">
-                Loading...
-            </div>
+            <Loader/>
         );
     }
 

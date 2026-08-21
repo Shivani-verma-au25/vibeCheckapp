@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { signIn, signOut, signUp, getMe } from "../services/auth.api";
+import { signIn, signOut, signUp, getMe, updateProfile } from "../services/auth.api";
 import { AuthContext } from "../state/auth.context";
 
 
@@ -17,7 +17,7 @@ export const useAuth = () => {
             if (!user) {
                 throw new Error("User data not found in response.");
             }
-            
+
             // set data in to context state
             setUser(user?.user);
 
@@ -57,10 +57,10 @@ export const useAuth = () => {
             setUser(userData?.user)
 
             return {
-            success: response.success,
-            message: response.message,
-            userData,
-        };
+                success: response.success,
+                message: response.message,
+                userData,
+            };
 
 
         } catch (error) {
@@ -73,8 +73,8 @@ export const useAuth = () => {
                     "Something went wrong",
             };
             console.log("error sign in hadler", error);
-        
-            
+
+
         } finally {
             setLoading(false)
         }
@@ -87,15 +87,15 @@ export const useAuth = () => {
             const response = await signOut();
             console.log("res", response);
 
-            if (!response?.data?.success) {
-                throw new Error(response?.data?.message)
+            if (!response?.success) {
+                throw new Error(response?.message)
             };
 
             // set user null
             setUser(null)
-            return{
-                success : response?.success,
-                message : response?.message,
+            return {
+                success: response?.success,
+                message: response?.message,
             }
 
         } catch (error) {
@@ -106,36 +106,37 @@ export const useAuth = () => {
                     error.message ||
                     "Something went wrong",
             };
-            console.log("error in handler" , error)
-        }finally{
+        } finally {
             setLoading(false)
         }
     };
 
 
     // getme handler
-    const getMeHandler = async () =>{
+    const getMeHandler = async () => {
         setLoading(true);
 
         try {
             const response = await getMe();
-            const  user = response.data;
+            const user = response.data;
 
-            if(!response?.success){
+            if (!response?.success) {
                 throw new Error("User not found")
             };
             // save into state
             setUser(user);
 
-            return({
-                success : user?.success,
-                message : user?.message,
+            return ({
+                success: user?.success,
+                message: user?.message,
                 user
             })
-            
-            
+
+
         } catch (error) {
-            setLoading(false)
+
+            console.log("error in getMe:", error);
+
             return {
                 success: false,
                 message:
@@ -143,16 +144,48 @@ export const useAuth = () => {
                     error.message ||
                     "Something went wrong",
             };
-        }finally{
+
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // update user  profile
+
+    const updateUserProfileHandler = async (data) => {
+        setLoading(true);
+
+        try {
+            const response = await updateProfile(data);
+            const user = response.data;
+
+            if (response?.success) {
+                setUser(response.data);
+            };
+
+            return {
+                success: response?.success,
+                message : response?.message,
+                user
+            };
+
+        } catch (error) {
+            setLoading(false)
+            return {
+                success: error.response?.success,
+                message:
+                    error.response?.data?.message ||
+                    error.message ||
+                    "Something went wrong",
+            };
+        } finally {
             setLoading(false);
         }
     }
 
-    useEffect(() => {
-        getMeHandler();
-    },[])
 
 
-    return {user, loading, signUpHandler , signInHandler , signOutHandler , getMeHandler}
+
+    return { user, loading, signUpHandler, signInHandler, signOutHandler, getMeHandler, updateUserProfileHandler }
 
 };

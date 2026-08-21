@@ -1,5 +1,5 @@
 import {Router} from 'express'
-import { signInUser, signOutUser, signupUser , getMe } from '../controller/auth.controller.js';
+import { signInUser, signOutUser, signupUser , getMe, updateUserProfile } from '../controller/auth.controller.js';
 import { isAuthenticated } from '../middlewares/auth.middleware.js';
 import { upload } from '../middlewares/multer.middleware.js';
 
@@ -13,7 +13,7 @@ router.route('/sign-out').post(isAuthenticated, signOutUser);
 
 // protected route for get user profile
 router.route('/me').get(isAuthenticated , getMe)
-
+router.route('/update-profile').put(isAuthenticated,upload.single('image'),updateUserProfile)
 
 
 

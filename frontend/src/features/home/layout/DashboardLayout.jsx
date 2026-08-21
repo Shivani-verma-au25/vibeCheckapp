@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { FiHome, FiList, FiUser, FiMusic } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { useSongs } from "../hooks/useSongs";
@@ -9,6 +9,7 @@ const DashboardLayout = () => {
 
     const { currentSong, serachHandler } = useSongs();
     const [search, setSearch] = useState('');
+    const navigate = useNavigate();
 
 
     const navItems = [
@@ -79,9 +80,9 @@ const DashboardLayout = () => {
 
                 {/* Logo */}
 
-                <div className="mb-14 flex items-center gap-3">
+                <div className="mb-14 flex items-center gap-3 ">
 
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black">
+                    <div onClick={()=>navigate('/')} className="cursor-pointer flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black">
                         <FiMusic size={20} />
                     </div>
 
@@ -141,15 +142,15 @@ const DashboardLayout = () => {
 
                 <header className="sticky top-0 z-30 border-b border-white/10 bg-black/80 backdrop-blur-xl">
 
-                    <div className="flex items-center justify-between px-2 sm:px-5 py-4 ">
+                    <div className="flex items-center justify-between px-2 sm:px-5 py-4  ">
 
-                        <div className="lg:hidden flex items-center gap-3">
+                        <div  className="lg:hidden flex items-center gap-3 ">
 
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-black">
+                            <div  className=" flex h-9 w-9 items-center justify-center rounded-lg bg-white text-black">
                                 <FiMusic />
                             </div>
 
-                            <span className="font-bold hidden sm:flex ">
+                            <span  className="font-bold hidden sm:flex gap-2 ">
                                 VibeCheck
                             </span>
 
@@ -177,10 +178,10 @@ const DashboardLayout = () => {
                         </div>
 
 
-                        {/* profile */}
+                        {/* profile
                         <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10">
                             <FiUser size={20} />
-                        </div>
+                        </div> */}
 
                     </div>
 

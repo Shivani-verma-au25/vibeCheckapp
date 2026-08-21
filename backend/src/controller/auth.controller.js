@@ -199,3 +199,81 @@ export const getMe = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, user, "Current logged in user."));
 });
+
+
+// update profile
+
+export const updateUserProfile = asyncHandler(async (req, res) => {
+
+
+    const {
+        name,
+        email,
+        password,
+        confirmPassword
+    } = req.body;
+
+    const userId = req.user?._id;
+
+    // find user
+    const user = await UserModel.findById(userId);
+
+    if(!user){
+        throw new ApiError(404 ,"User not found.")
+    };
+
+    // if there is name save name into user
+    if(name.trim()){
+        user.name = name.trim()
+    };
+    // if there is email save email into user
+    if(email.trim()){
+        user.email = email?.trim().toLowerCase()
+    };
+
+    // check passwords
+    if(password || confirmPassword){
+        if(!password || !confirmPassword){
+            throw new ApiError(400 , "Both password and confirm password are required.")
+        };
+
+        if(password !== confirmPassword){
+            throw new ApiError(400 , "Password and confirm password do not match.")
+        };
+        
+        // save new password into user's password
+        user.password = password;
+    };
+
+    //save image 
+
+    if(req?.file){
+        try {
+            const uploadImage = await uploadFile({
+                buffer : req.file?.buffer,
+                fileName : req.file?.originalname,
+                folder: "/vibe-check/Profile",
+            });
+
+            // save image file to user image
+            user.image = uploadImage.url;
+            
+        } catch (error) {
+            throw new ApiError(
+                400,
+                `Failed to upload image: ${error.message}`
+            );
+        }
+    }
+
+    // save updates
+    await user.save();
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            user,
+            "Profile updated successfully."
+        )
+    );
+});
