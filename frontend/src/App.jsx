@@ -3,8 +3,8 @@ import FaceExpression from './features/Expression/components/FaceExpression'
 import { RouterProvider } from 'react-router-dom'
 import router from './routes/app.routes'
 import { AuthProvider } from './features/auth/state/auth.context'
-import toast, { Toaster } from 'react-hot-toast';
-import { SongContenxtProvider } from './features/home/state/song.contens'
+import { Toaster } from 'react-hot-toast';
+import { SongContenxtProvider } from './features/home/state/Song.context'
 
 
 const App = () => {
@@ -15,7 +15,6 @@ const App = () => {
       </SongContenxtProvider>
         <Toaster />
     </AuthProvider>
-    
   )
 }
 
