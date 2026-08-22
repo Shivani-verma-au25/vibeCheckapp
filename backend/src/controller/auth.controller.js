@@ -88,7 +88,7 @@ export const signupUser = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { user: createdUser, refreshToken },
+        { user: createdUser },
         "User created successfully.",
       ),
     );
@@ -142,7 +142,7 @@ export const signInUser = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { user, refreshToken, accessToken },
+        { user },
         "User sign in successfully",
       ),
     );
