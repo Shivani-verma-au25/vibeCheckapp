@@ -115,28 +115,29 @@ export const useAuth = () => {
 
         try {
             const response = await getMe();
-            const user = response.data;
 
             if (!response?.success) {
-                throw new Error("User not found")
-            };
-            // save into state
+                throw new Error(
+                    response?.message || "User not found"
+                );
+            }
+
+            const user = response.data;
+
             setUser(user);
 
-            return ({
-                success: response?.success,
-                message: response?.message,
-                user
-            })
-
+            return {
+                success: response.success,
+                message: response.message,
+                user,
+            };
 
         } catch (error) {
-
             return {
                 success: false,
                 message:
-                    error.response?.data?.message ||
-                    error.message ||
+                    error?.response?.data?.message ||
+                    error?.message ||
                     "Something went wrong",
             };
 
@@ -160,7 +161,7 @@ export const useAuth = () => {
 
             return {
                 success: response?.success,
-                message : response?.message,
+                message: response?.message,
                 user
             };
 
