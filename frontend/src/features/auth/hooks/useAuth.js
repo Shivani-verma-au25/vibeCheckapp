@@ -57,8 +57,8 @@ export const useAuth = () => {
             setUser(userData?.user)
 
             return {
-                success: response.success,
-                message: response.message,
+                success: response?.success,
+                message: response?.message,
                 userData,
             };
 
@@ -124,8 +124,8 @@ export const useAuth = () => {
             setUser(user);
 
             return ({
-                success: user?.success,
-                message: user?.message,
+                success: response?.success,
+                message: response?.message,
                 user
             })
 
