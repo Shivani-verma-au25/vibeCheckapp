@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { songContext } from "../state/song.contens";
-import { getAllSongs, getSongByMood, searchSong } from "../services/song.api";
+import { getAllSongs, getSongByMood, searchSong, uploadSongs } from "../services/song.api";
 
 export const useSongs = () => {
     const { songLoading,
@@ -18,17 +18,47 @@ export const useSongs = () => {
 
         currentSong,
         // setCurrentSong,
-        setCurrentSongIndex } = useContext(songContext);
+        setCurrentSongIndex 
+        } = useContext(songContext);
 
 
-    // export const uploadSongsHandler = (songs) =>{};
+    // song uploader handler
+    const uploadSongsHandler = async (songs) =>{
+        setSongLoading(true);
+        try {
+            const response = await uploadSongs(songs);
+            // console.log("songs" , response);
+            const uploadedSongs = response?.data;
+            
+            if(!response?.success){
+                throw new Error("Song not uploaded")
+            };
+
+            setSongs(uploadedSongs);
+            return {
+                success : response?.success,
+                message : response?.message,
+                uploadSongs
+            };
+
+        } catch (error) {
+            return {
+                success: error.response?.data?.success,
+                message:
+                    error.response?.data?.message ||
+                    error.message ||
+                    "Something went wrong"
+            };
+        }finally{
+            setSongLoading(false);
+        }
+    };
 
 
 
     //  song by mood handler
     const getSongByMoodHandler = async ({ mood }) => {
         setSongLoading(true);
-
 
         try {
 
@@ -283,7 +313,7 @@ export const useSongs = () => {
 
 
     return {
-        // uploadSongsHandler,
+        uploadSongsHandler,
         getSongByMoodHandler,
 
         songs,
