@@ -2,11 +2,9 @@ import axios from 'axios'
 
 
 const apiIntsance = axios.create({
-    baseURL : 'http://localhost:8000',
+    baseURL : 'https://vibecheckapp.onrender.com',
     withCredentials : true,
 });
-
-
 
 export const signUp = async(data) =>{
     const response = await apiIntsance.post('/api/v1/user/sign-up' , data);
