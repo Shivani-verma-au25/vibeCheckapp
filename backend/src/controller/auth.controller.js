@@ -4,275 +4,263 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { generateAccessTokenAndRefreshTokens } from "../utils/generateAccessAndRefreahToken.js";
 import { uploadFile } from "../utils/cloudinaryUploder.js";
-import redis from '../config/cache.js'
+import redis from "../config/cache.js";
 
 // user signup controller
 export const signupUser = asyncHandler(async (req, res) => {
-    const { name, email, password } = req.body;
-    // todo hamdle image
+  const { name, email, password } = req.body;
+  // todo hamdle image
 
-    if ([name, email, password].some((field) => !field || field.trim() === "")) {
-        throw new ApiError(400, "All fields are required.");
+  if ([name, email, password].some((field) => !field || field.trim() === "")) {
+    throw new ApiError(400, "All fields are required.");
+  }
+
+  // check user is already exixt
+  const existedUser = await UserModel.findOne({ email }).select("-password");
+  if (existedUser) {
+    throw new ApiError(404, "User already exist.");
+  }
+
+  // image handler
+
+  const file = req.file;
+  let uploadedImage = null;
+
+  // only upload if file is provided
+  if (file) {
+    try {
+      // check if file is provided
+      if (!file) {
+        throw new ApiError(400, "No file provided for upload.");
+      }
+      // upload file to imagekit
+      uploadedImage = await uploadFile({
+        buffer: file.buffer,
+        fileName: file.originalname,
+        folder: "/vibe-check/Profile",
+      });
+    } catch (error) {
+      throw new ApiError(
+        400,
+        `Failed to upload file to Cloudinary: ${error.message}`,
+      );
     }
+  }
 
-    // check user is already exixt
-    const existedUser = await UserModel.findOne({ email }).select("-password");
-    if (existedUser) {
-        throw new ApiError(404, "User already exist.");
-    }
-  
-    // image handler
+  // create new user
+  const user = await UserModel.create({
+    name,
+    email,
+    password,
+    image: uploadedImage ? uploadedImage.url : null,
+  });
 
-    const file = req.file;
-    let uploadedImage = null;
+  // check user is created
+  const createdUser = await UserModel.findById(user?._id).select(
+    "-password -refreshToken",
+  );
 
-    // only upload if file is provided
-    if (file) {
-        try {
-            // check if file is provided
-            if (!file) {
-                throw new ApiError(400, "No file provided for upload.");
-            }
-            // upload file to imagekit
-            uploadedImage = await uploadFile({
-                buffer: file.buffer,
-                fileName: file.originalname,
-                folder : '/vibe-check/Profile'
-            });
-        } catch (error) {
-            throw new ApiError(400, `Failed to upload file to Cloudinary: ${error.message}`);
-        }
-    }
+  if (!createdUser) {
+    throw new ApiError(400, "User have not created yet.");
+  }
 
-    // create new user
-    const user = await UserModel.create({
-        name,
-        email,
-        password,
-        image: uploadedImage ? uploadedImage.url : null,
-    });
+  // tokens
 
-    // check user is created
-    const createdUser = await UserModel.findById(user?._id).select(
-        "-password -refreshToken",
+  const { accessToken, refreshToken } =
+    await generateAccessTokenAndRefreshTokens(createdUser?._id);
+
+  // http methond options
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 1 * 60 * 60 * 1000, //1 hour
+    })
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000, //7 days
+    })
+    .json(
+      new ApiResponse(
+        200,
+        { user: createdUser, refreshToken },
+        "User created successfully.",
+      ),
     );
-
-    if (!createdUser) {
-        throw new ApiError(400, "User have not created yet.");
-    }
-
-    // tokens
-
-    const { accessToken, refreshToken } =
-        await generateAccessTokenAndRefreshTokens(createdUser?._id);
-
-    // http methond options
-
-    return res
-        .status(200)
-        .cookie("accessToken", accessToken, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 1 * 60 * 60 * 1000, //1 hour
-        })
-        .cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000, //7 days
-        })
-        .json(
-            new ApiResponse(
-                200,
-                { user: createdUser, refreshToken },
-                "User created successfully.",
-            ),
-        )
 });
 
 // user sign controller
 export const signInUser = asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    if (!email) {
-        throw new ApiError(409, "Email is required.");
-    }
-    if (!password) {
-        throw new ApiError(409, "password is required.");
-    }
+  if (!email) {
+    throw new ApiError(409, "Email is required.");
+  }
+  if (!password) {
+    throw new ApiError(409, "password is required.");
+  }
 
-    // check exist user
-    const user = await UserModel.findOne({ email }).select("-refreshToken");
+  // check exist user
+  const user = await UserModel.findOne({ email }).select("-refreshToken");
 
-    if (!user) {
-        throw new ApiError(404, "User not found.");
-    }
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
 
-    // const validate password
+  // const validate password
 
-    const IsPasswordCorrect = await user.comparePassword(password);
+  const IsPasswordCorrect = await user.comparePassword(password);
 
-    if (!IsPasswordCorrect) {
-        throw new ApiError(409, "your password or email is not correct");
-    }
+  if (!IsPasswordCorrect) {
+    throw new ApiError(409, "your password or email is not correct");
+  }
 
-    // generate token
+  // generate token
 
-    const { accessToken, refreshToken } =
-        await generateAccessTokenAndRefreshTokens(user?._id);
+  const { accessToken, refreshToken } =
+    await generateAccessTokenAndRefreshTokens(user?._id);
 
-    return res
-        .status(200)
-        .cookie("accessToken", accessToken, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 1 * 60 * 60 * 1000, //1 hour
-        })
-        .cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 60 * 60 * 1000, //7 hour
-        })
-        .json(
-            new ApiResponse(
-                200,
-                { user, refreshToken, accessToken },
-                "User sign in successfully",
-            ),
-        );
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 1 * 60 * 60 * 1000, //1 hour
+    })
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 60 * 60 * 1000, //7 hour
+    })
+    .json(
+      new ApiResponse(
+        200,
+        { user, refreshToken, accessToken },
+        "User sign in successfully",
+      ),
+    );
 });
 
 // export const signOut controller
 
 export const signOutUser = asyncHandler(async (req, res) => {
-    if (!req.user || !req.user._id) {
-        throw new ApiError(401, "User not authenticated.");
-    }
+  if (!req.user || !req.user._id) {
+    throw new ApiError(401, "User not authenticated.");
+  }
 
-    await UserModel.findByIdAndUpdate(
-        req.user._id,
-        {
-            $set: {
-                refreshToken: null,
-            },
-        },
-        {   returnDocument: "after"},
-    );
+  await UserModel.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        refreshToken: null,
+      },
+    },
+    { returnDocument: "after" },
+  );
 
-    // blacklist the access token in redis
-    await redis.set(req.cookies?.accessToken, 'blackListed' ,   "EX",  60 * 60); // Set expiration time for 1 hour
-    // await redis.set(req.cookies?.accessToken, Date.now().toString()); 
+  // blacklist the access token in redis
+  await redis.set(req.cookies?.accessToken, "blackListed", "EX", 60 * 60); // Set expiration time for 1 hour
+  // await redis.set(req.cookies?.accessToken, Date.now().toString());
 
-
-
-    return res
-        .status(200)
-        .clearCookie("accessToken", {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 1 * 60 * 60 * 1000, //1 hour
-        })
-        .clearCookie("refreshToken", {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 1 * 60 * 60 * 1000, //7 hour
-        })
-        .json(new ApiResponse(200, {}, "User signed out successfully."));
+  return res
+    .status(200)
+    .clearCookie("accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 1 * 60 * 60 * 1000, //1 hour
+    })
+    .clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 1 * 60 * 60 * 1000, //7 hour
+    })
+    .json(new ApiResponse(200, {}, "User signed out successfully."));
 });
 
 // get me controller
 
 export const getMe = asyncHandler(async (req, res) => {
-    const userId = req?.user?._id;
+  const userId = req?.user?._id;
 
-    const user = await UserModel.findById(userId).select(
-        "-password -refreshToken",
-    );
+  const user = await UserModel.findById(userId).select(
+    "-password -refreshToken",
+  );
 
-    return res
-        .status(200)
-        .json(new ApiResponse(200, user, "Current logged in user."));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Current logged in user."));
 });
-
 
 // update profile
 
 export const updateUserProfile = asyncHandler(async (req, res) => {
+  const { name, email, password, confirmPassword } = req.body;
 
+  const userId = req.user?._id;
 
-    const {
-        name,
-        email,
-        password,
-        confirmPassword
-    } = req.body;
+  // find user
+  const user = await UserModel.findById(userId);
 
-    const userId = req.user?._id;
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
 
-    // find user
-    const user = await UserModel.findById(userId);
+  // if there is name save name into user
+  if (name.trim()) {
+    user.name = name.trim();
+  }
+  // if there is email save email into user
+  if (email.trim()) {
+    user.email = email?.trim().toLowerCase();
+  }
 
-    if(!user){
-        throw new ApiError(404 ,"User not found.")
-    };
-
-    // if there is name save name into user
-    if(name.trim()){
-        user.name = name.trim()
-    };
-    // if there is email save email into user
-    if(email.trim()){
-        user.email = email?.trim().toLowerCase()
-    };
-
-    // check passwords
-    if(password || confirmPassword){
-        if(!password || !confirmPassword){
-            throw new ApiError(400 , "Both password and confirm password are required.")
-        };
-
-        if(password !== confirmPassword){
-            throw new ApiError(400 , "Password and confirm password do not match.")
-        };
-        
-        // save new password into user's password
-        user.password = password;
-    };
-
-    //save image 
-
-    if(req?.file){
-        try {
-            const uploadImage = await uploadFile({
-                buffer : req.file?.buffer,
-                fileName : req.file?.originalname,
-                folder: "/vibe-check/Profile",
-            });
-
-            // save image file to user image
-            user.image = uploadImage.url;
-            
-        } catch (error) {
-            throw new ApiError(
-                400,
-                `Failed to upload image: ${error.message}`
-            );
-        }
+  // check passwords
+  if (password || confirmPassword) {
+    if (!password || !confirmPassword) {
+      throw new ApiError(
+        400,
+        "Both password and confirm password are required.",
+      );
     }
 
-    // save updates
-    await user.save();
+    if (password !== confirmPassword) {
+      throw new ApiError(400, "Password and confirm password do not match.");
+    }
 
-    return res.status(200).json(
-        new ApiResponse(
-            200,
-            user,
-            "Profile updated successfully."
-        )
-    );
+    // save new password into user's password
+    user.password = password;
+  }
+
+  //save image
+
+  if (req?.file) {
+    try {
+      const uploadImage = await uploadFile({
+        buffer: req.file?.buffer,
+        fileName: req.file?.originalname,
+        folder: "/vibe-check/Profile",
+      });
+
+      // save image file to user image
+      user.image = uploadImage.url;
+    } catch (error) {
+      throw new ApiError(400, `Failed to upload image: ${error.message}`);
+    }
+  }
+
+  // save updates
+  await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Profile updated successfully."));
 });
