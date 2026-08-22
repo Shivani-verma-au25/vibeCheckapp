@@ -3,14 +3,14 @@ import express, { json } from 'express'
 import cookieParser from 'cookie-parser'
 import Cors from 'cors'
 
-
 dotenv.config();
 
 const app = express();
 
 
 app.use(Cors({
-  origin:"https://vibe-checkapp.vercel.app",
+  origin: configrations.frontendUrl || 'http://localhost:5173',
+  // origin: 'http://localhost:5173',
   credentials : true,
 }))
 
@@ -24,6 +24,7 @@ app.use(cookieParser());
 // routes
 import authRouter from './routes/auth.route.js'
 import songsRouter from './routes/songs.route.js'
+import { configrations } from './config/congi.js';
 
 app.get('/api/v1/health-check' , (req , res) => {
     return res.status(200).json({

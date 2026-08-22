@@ -110,41 +110,44 @@ export const useAuth = () => {
 
 
     // getme handler
-    const getMeHandler = async () => {
-        setLoading(true);
+    // const getMeHandler = async () => {
+    //     setLoading(true);
 
-        try {
-            const response = await getMe();
+    //     try {
+    //         const response = await getMe();
 
-            if (!response?.success) {
-                throw new Error(
-                    response?.message || "User not found"
-                );
-            }
+    //         console.log("res",response);
+            
 
-            const user = response.data;
+    //         if (!response?.success) {
+    //             throw new Error(
+    //                 response?.message || "User not found"
+    //             );
+    //         }
 
-            setUser(user);
+    //         const user = response.data;
 
-            return {
-                success: response.success,
-                message: response.message,
-                user,
-            };
+    //         setUser(user);
 
-        } catch (error) {
-            return {
-                success: false,
-                message:
-                    error?.response?.data?.message ||
-                    error?.message ||
-                    "Something went wrong",
-            };
+    //         return {
+    //             success: response.success,
+    //             message: response.message,
+    //             user,
+    //         };
 
-        } finally {
-            setLoading(false);
-        }
-    };
+    //     } catch (error) {
+    //         return {
+    //             success: false,
+    //             message:
+    //                 error?.response?.data?.message ||
+    //                 error?.message ||
+    //                 "Something went wrong",
+    //         };
+
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     // update user  profile
 
@@ -177,8 +180,9 @@ export const useAuth = () => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
-    return { user, loading, signUpHandler, signInHandler, signOutHandler, getMeHandler, updateUserProfileHandler }
+
+    return { user, loading, signUpHandler, signInHandler, signOutHandler, updateUserProfileHandler }
 
 };

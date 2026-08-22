@@ -18,6 +18,7 @@ export const configrations = {
     redisHost : process.env.REDIS_HOST,
     redisPort : process.env.REDIS_PORT,
     redisPassword : process.env.REDIS_PASSWORD,
+    frontendUrl : process.env.FRONTEND_URL
 };
 
 

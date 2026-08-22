@@ -75,14 +75,14 @@ export const signupUser = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 1 * 60 * 60 * 1000, //1 hour
     })
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, //7 days
     })
     .json(
@@ -129,14 +129,14 @@ export const signInUser = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 1 * 60 * 60 * 1000, //1 hour
     })
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 60 * 60 * 1000, //7 hour
     })
     .json(
@@ -151,6 +151,7 @@ export const signInUser = asyncHandler(async (req, res) => {
 // export const signOut controller
 
 export const signOutUser = asyncHandler(async (req, res) => {
+
   if (!req.user || !req.user._id) {
     throw new ApiError(401, "User not authenticated.");
   }
@@ -167,21 +168,21 @@ export const signOutUser = asyncHandler(async (req, res) => {
 
   // blacklist the access token in redis
   await redis.set(req.cookies?.accessToken, "blackListed", "EX", 60 * 60); // Set expiration time for 1 hour
-  // await redis.set(req.cookies?.accessToken, Date.now().toString());
+ 
 
   return res
     .status(200)
     .clearCookie("accessToken", {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 1 * 60 * 60 * 1000, //1 hour
     })
     .clearCookie("refreshToken", {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 1 * 60 * 60 * 1000, //7 hour
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, //7 hour
     })
     .json(new ApiResponse(200, {}, "User signed out successfully."));
 });
