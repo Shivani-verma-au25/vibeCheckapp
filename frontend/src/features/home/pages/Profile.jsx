@@ -28,9 +28,7 @@ const Profile = () => {
             password: "",
             confirmPassword: "",
         });
-
         setPreview(user.image || "");
-
     }, [user]);
 
     // image handler
@@ -42,7 +40,6 @@ const Profile = () => {
         const imageUrl = URL.createObjectURL(file);
         setPreview(imageUrl);
     }
-
 
     // onchange handler
     const handleChange = (e) => {
