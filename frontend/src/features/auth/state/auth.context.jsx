@@ -20,12 +20,9 @@ export const AuthProvider = ({ children }) => {
 
                 if (response?.success) {
                     setUser(response.data);
-                } else {
-                    setUser(null);
-                }
+                } 
             } catch (error) {
                 console.log("GET ME ERROR:", error);
-                setUser(null);
             } finally {
                 setLoading(false);
             }
