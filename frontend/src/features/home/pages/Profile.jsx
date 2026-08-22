@@ -19,9 +19,7 @@ const Profile = () => {
     const [preview, setPreview] = useState("");
 
     useEffect(() => {
-
         if (!user) return;
-
         setProfile({
             name: user.name || "",
             email: user.email || "",
@@ -35,7 +33,6 @@ const Profile = () => {
     const handleImageChange = (e) => {
         const file = e.target?.files[0];
         if (!file) return;
-
         setImageFile(file);
         const imageUrl = URL.createObjectURL(file);
         setPreview(imageUrl);
@@ -44,18 +41,15 @@ const Profile = () => {
     // onchange handler
     const handleChange = (e) => {
         const { name, value } = e.target;
-
         setProfile((prev) => ({
             ...prev,
             [name]: value,
         }));
     };
 
-
     // submit handler
     const onSubmitHandler = async (e) => {
         e.preventDefault();
-
         //create new form data
         const formData = new FormData();
 
@@ -73,7 +67,7 @@ const Profile = () => {
         if (imageFile) {
             formData.append("image", imageFile);
         };
-
+        // handler calling
         const result = await updateUserProfileHandler(formData);
 
         if (result.success) {
@@ -102,7 +96,6 @@ const Profile = () => {
         }
 
         toast.success(result?.message || "Signed out successfully");
-
         navigate("/sign-in");
     };
 
