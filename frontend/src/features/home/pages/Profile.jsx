@@ -35,8 +35,6 @@ const Profile = () => {
 
     // image handler
     const handleImageChange = (e) => {
-        console.log("e", e.target);
-
         const file = e.target?.files[0];
         if (!file) return;
 
