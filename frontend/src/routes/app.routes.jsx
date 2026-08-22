@@ -1,16 +1,17 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
-import Signin from "../features/auth/pages/Signin";
+const SignIn = lazy(() =>import("../features/auth/pages/Signin"));
 import Signup from "../features/auth/pages/Signup";
 
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 
 import DashboardLayout from "../features/home/layout/DashboardLayout";
 
-import Home from "../features/home/pages/Home";
+const Home = lazy(() => import("../features/home/pages/Home"));
 import PageNotFound from "../features/auth/components/PageNotFound";
 import PlayList from "../features/home/compoents/PlayList";
-import Profile from "../features/home/pages/Profile";
+const Profile = lazy(() =>import("../features/home/pages/Profile"));
 
 const router = createBrowserRouter([
     // =========================
@@ -19,7 +20,7 @@ const router = createBrowserRouter([
 
     {
         path: "/sign-in",
-        element: <Signin />
+        element: <SignIn />
     },
 
     {
