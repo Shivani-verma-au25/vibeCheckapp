@@ -10,7 +10,7 @@ const app = express();
 
 
 app.use(Cors({
-  origin:"http://localhost:5173",
+  origin:"https://vibe-checkapp.vercel.app",
   credentials : true,
 }))
 
