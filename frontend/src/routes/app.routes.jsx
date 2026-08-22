@@ -8,9 +8,9 @@ import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 import DashboardLayout from "../features/home/layout/DashboardLayout";
 
 import Home from "../features/home/pages/Home";
-import Playlist from "../features/home/compoents/PlayList";
-import Profile from "../features/home/pages/Profile";
 import PageNotFound from "../features/auth/components/PageNotFound";
+import PlayList from "../features/home/compoents/PlayList";
+import Profile from "../features/home/pages/Profile";
 
 const router = createBrowserRouter([
     // =========================
@@ -49,12 +49,12 @@ const router = createBrowserRouter([
 
                     {
                         path: "playlist",
-                        element: <Playlist />
+                        element: <PlayList />
                     },
 
                     {
                         path: "profile",
-                        element: <Profile />
+                        element: <Profile/>
                     }
 
                 ]
