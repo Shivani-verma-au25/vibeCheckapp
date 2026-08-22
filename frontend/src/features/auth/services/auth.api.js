@@ -21,7 +21,7 @@ export const signOut = async() =>{
     return response.data;
 };
 
-export const getMe = async(data) =>{
+export const getMe = async() =>{
     const response = await apiIntsance.get('/api/v1/user/me');
     return response.data;
 };
