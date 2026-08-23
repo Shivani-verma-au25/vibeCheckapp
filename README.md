@@ -2,7 +2,7 @@
 
 > **Music that matches your vibe.**
 
-🔴 **Live Demo:** [VibeCheck](YOUR-LIVE-LINK-HERE)
+🔴 **Live Demo:** [VibeCheck](https://vibe-checkapp.vercel.app/)
 
 VibeCheck is a full-stack music recommendation application that uses **facial expression detection** to understand the user's current vibe and recommend songs based on it.
 
