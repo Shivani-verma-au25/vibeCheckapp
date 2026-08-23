@@ -132,13 +132,15 @@ export const signInUser = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
       maxAge: 60 * 60 * 1000,
+      // sameSite: isProduction ? "none" : "lax",
+      sameSite: "lax",
     })
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      sameSite: "lax",
+      // sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
     .json(new ApiResponse(200, { user }, "User sign in successfully"));
