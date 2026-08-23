@@ -8,21 +8,16 @@ import jwt from "jsonwebtoken";
 
 
 export const isAuthenticated = asyncHandler(async (req, res, next) => {
-    console.log("========== AUTH CHECK ==========");
 
-    console.log("🍪 COOKIES:", req.cookies);
 
     const authHeader = req.header("Authorization");
-    console.log("📦 AUTHORIZATION:", authHeader);
 
     const token =
         req.cookies?.accessToken ||
         authHeader?.replace("Bearer ", "");
 
-    console.log("🔑 TOKEN:", token);
 
     if (!token) {
-        console.log("❌ NO TOKEN FOUND");
 
         throw new ApiError(
             401,
@@ -30,14 +25,11 @@ export const isAuthenticated = asyncHandler(async (req, res, next) => {
         );
     }
 
-    console.log("🔍 Checking Redis...");
 
     const isTokenBlackListed = await redis.get(token);
 
-    console.log("🔴 BLACKLIST:", isTokenBlackListed);
 
     if (isTokenBlackListed) {
-        console.log("❌ TOKEN BLACKLISTED");
 
         throw new ApiError(
             401,
@@ -46,20 +38,15 @@ export const isAuthenticated = asyncHandler(async (req, res, next) => {
     }
 
     try {
-        console.log("🔐 Verifying JWT...");
 
         const decodedToken = jwt.verify(
             token,
             configrations.accesstoken
         );
 
-        console.log("✅ DECODED TOKEN:", decodedToken);
 
         const user = await UserModel
             .findById(decodedToken._id)
-            .select("-password -refreshToken");
-
-        console.log("👤 USER:", user);
 
         if (!user) {
             throw new ApiError(
@@ -70,13 +57,10 @@ export const isAuthenticated = asyncHandler(async (req, res, next) => {
 
         req.user = user;
 
-        console.log("✅ AUTHENTICATION SUCCESS");
 
         next();
 
     } catch (error) {
-
-        console.log("❌ AUTH ERROR:", error);
 
         if (error instanceof ApiError) {
             throw error;

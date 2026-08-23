@@ -16,8 +16,6 @@ export const AuthProvider = ({ children }) => {
             try {
                 const response = await getMe();
 
-                console.log("GET ME RESPONSE:", response);
-
                 if (response?.success) {
                     setUser(response.data);
                 } 

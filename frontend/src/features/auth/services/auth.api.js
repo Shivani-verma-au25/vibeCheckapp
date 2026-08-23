@@ -6,8 +6,6 @@ const apiIntsance = axios.create({
     withCredentials : true,
 });
 
-console.log("frontend url " , import.meta.env.VITE_BACKEND_URL);
-
 
 
 export const signUp = async(data) =>{

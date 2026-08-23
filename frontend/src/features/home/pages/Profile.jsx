@@ -326,13 +326,14 @@ const Profile = () => {
                         {/*save changes  */}
                         <button
                             type="submit"
-                            disabled={loading}
+                            // disabled={loading}
                             className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-gray-200 cursor-pointer"
                         >
-                            {loading
+                        Save Changes
+                            {/* {loading
                                 ? "Saving..."
                                 : "Save Changes"
-                            }
+                            } */}
                         </button>
 
                     </div>
