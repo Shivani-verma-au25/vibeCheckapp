@@ -2,6 +2,8 @@
 
 > **Music that matches your vibe.**
 
+🔴 **Live Demo:** [VibeCheck](YOUR-LIVE-LINK-HERE)
+
 VibeCheck is a full-stack music recommendation application that uses **facial expression detection** to understand the user's current vibe and recommend songs based on it.
 
 Instead of manually choosing what to listen to, users can use the **Mood Scanner** to detect their facial expression and discover music that matches their mood.
@@ -322,7 +324,6 @@ Possible future improvements include:
 * [ ] Add shuffle and repeat
 * [ ] Add more sophisticated recommendation logic
 * [ ] Improve accessibility
-
 
 ---
 
