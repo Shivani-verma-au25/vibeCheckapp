@@ -86,11 +86,7 @@ export const signupUser = asyncHandler(async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, //7 days
     })
     .json(
-      new ApiResponse(
-        200,
-        { user: createdUser },
-        "User created successfully.",
-      ),
+      new ApiResponse(200, { user: createdUser }, "User created successfully."),
     );
 });
 
@@ -125,36 +121,32 @@ export const signInUser = asyncHandler(async (req, res) => {
   const { accessToken, refreshToken } =
     await generateAccessTokenAndRefreshTokens(user?._id);
 
-  console.log("opt" , process.env.NODE_ENV);
-    
+  console.log("opt", process.env.NODE_ENV);
+
+  const isProduction = process.env.NODE_ENV === "production";
+  console.log(isProduction, " isproduction");
+  
 
   return res
     .status(200)
     .cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 1 * 60 * 60 * 1000, //1 hour
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 60 * 60 * 1000,
     })
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 60 * 60 * 1000, //7 hour
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     })
-    .json(
-      new ApiResponse(
-        200,
-        { user },
-        "User sign in successfully",
-      ),
-    );
+    .json(new ApiResponse(200, { user }, "User sign in successfully"));
 });
 
 // export const signOut controller
 
 export const signOutUser = asyncHandler(async (req, res) => {
-
   if (!req.user || !req.user._id) {
     throw new ApiError(401, "User not authenticated.");
   }
@@ -171,14 +163,13 @@ export const signOutUser = asyncHandler(async (req, res) => {
 
   // blacklist the access token in redis
   await redis.set(req.cookies?.accessToken, "blackListed", "EX", 60 * 60); // Set expiration time for 1 hour
- 
 
   return res
     .status(200)
     .clearCookie("accessToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 1 * 60 * 60 * 1000, //1 hour
     })
     .clearCookie("refreshToken", {
