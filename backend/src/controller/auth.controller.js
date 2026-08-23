@@ -125,12 +125,15 @@ export const signInUser = asyncHandler(async (req, res) => {
   const { accessToken, refreshToken } =
     await generateAccessTokenAndRefreshTokens(user?._id);
 
+  console.log("opt" , process.env.NODE_ENV);
+    
+
   return res
     .status(200)
     .cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 1 * 60 * 60 * 1000, //1 hour
     })
     .cookie("refreshToken", refreshToken, {
